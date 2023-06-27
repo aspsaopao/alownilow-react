@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# 一个很简单的案例
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+一个很简单的案例
 
 ## Available Scripts
 

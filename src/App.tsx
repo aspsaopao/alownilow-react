@@ -1,72 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Table } from 'antd';
+import { Button, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { TableRowSelection } from 'antd/es/table/interface';
 import AIHeader, { AIHeaderProps, AIHeaderRefCurrent } from './component/AlHeader';
 import './App.css'
-/**
- * 字典集合
- */
-interface Dictionary<T> {
-  [key: string]: T;
-}
-interface DataType {
-  rid: number;
-  name: string;
-  nameEn: string;
-}
+import { DataType, pullDataSource, Dictionary } from './dataservice/data';
 
-const dataSource: DataType[] = [
-  {
-    rid: 2595470429880,
-    name: '客房(大床)',
-    nameEn: 'Queen Room',
-  },
-  {
-    rid: 65656,
-    name: '客房(双床aaa)',
-    nameEn: 'Twin Room',
-  },
-  {
-    rid: 25955592678231,
-    name: '客房(双床AAa)',
-    nameEn: 'Twin Room',
-  },
-  {
-    rid: 2595559267881,
-    name: '客房(双床)',
-    nameEn: 'Twin Room',
-  },
-  {
-    rid: 2595559267882,
-    name: '客房(双床1)',
-    nameEn: 'Twin Room',
-  },
-  {
-    rid: 2595559267883,
-    name: '客房(双床2双床1)',
-    nameEn: 'Twin Room',
-  },
-  {
-    rid: 2595563275880,
-    name: '家庭房(7人入住)',
-    nameEn: 'Family Room for 7 People',
-  },
-];
-
-const pullDataSource = (): Promise<DataType[]> => {
-
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      let newdata = dataSource.filter(t => t);
-      res(newdata);
-    }, 500);
-  })
-
-}
 
 const App: React.FC = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
   /**
    * table数据源
    */
@@ -74,6 +14,7 @@ const App: React.FC = () => {
 
   const [lastTableData, setLasttableData] = useState<DataType[]>([]);
 
+  const [alheaderPrivateReturnData, setAlheaderPrivateReturnData] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -100,26 +41,11 @@ const App: React.FC = () => {
       dataIndex: 'nameEn',
     },
   ];
-
-  const rowSelection: TableRowSelection<any> = {
-    selectedRowKeys: selectedRowKeys,
-    onChange: (newSelectedRowKeys: React.Key[]) => {
-      console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-      setSelectedRowKeys(newSelectedRowKeys as number[]);
-    },
-  };
-  const submit = async () => {
-    let res = await pullDataSource();
-    setTableData(res);
-    // console.log(ref11, 4544);
-    // if (ref11) {
-    //   ref11.current.myPriFunction();
-    // }
-    // //接口测试
-    // setSelectedRowKeys([]);
-  };
-
-  let aIHeaderref = useRef<AIHeaderRefCurrent>(null);
+  /**
+   * 生命组件AIHeader的ref 
+   * 并在下面组件使用： <AIHeader  ref={aIHeaderref} />
+   */
+  const aIHeaderref = useRef<AIHeaderRefCurrent>(null);
 
   /**
    * al组件值改变事件
@@ -127,7 +53,6 @@ const App: React.FC = () => {
    */
   const onAlChange = (e: string) => {
     let newmatchDataKey: Dictionary<DataType> = {};
-    aIHeaderref.current?.myPrivateFunction();
     if (e === "") {
       setMatchDataKey(newmatchDataKey);
       setTableData(lastTableData);
@@ -148,25 +73,39 @@ const App: React.FC = () => {
     setMatchDataKey(newmatchDataKey);
     setTableData(newdata);
   };
-  const pullData = (e: string) => {
-    // console.log(2323);
-    return '得到回调的数据进行返回' + e;
+  /**
+   * AIHeaderProps组件 callback
+   * @returns 
+   */
+  const onAIHeaderPropsCallBack = () => {
+    
+    //这里进行业务处理
+    console.log("儿子给我发信息了 我看看，居然要数据 还是string类型，随便给一个吧");
+    return '儿子记得吃--狗屎';
   };
-
+  /**
+   * 组件参数
+   */
   const poopdata: AIHeaderProps = {
-    name: '实现了回调',
+    name: '一个普通的参数，狗儿子',
     onAlChange: onAlChange,
-    pullData: pullData,
+    callback: onAIHeaderPropsCallBack,
   };
 
+  const click = () => {
+    console.log("准备调用子组件方法，看他想做啥")
+    let str = aIHeaderref.current?.myPrivateFunction()??"";
+    setAlheaderPrivateReturnData(str);
+    console.log("子组件方法调用结束，得到子组件方法返回的信息，并展示了")
+  }
   return (
     <div>
-      <Button onClick={submit}>拉取数据</Button>
       <AIHeader   {...poopdata} ref={aIHeaderref} />
+      <Button onClick={click}>试试儿子'AIHeader组件'中的方法</Button>
+      <Tag color="lime">{alheaderPrivateReturnData}</Tag>
       <Table
         key="table"
         rowKey={'rid'}
-        rowSelection={rowSelection}
         columns={columns}
         dataSource={tableData}
       />

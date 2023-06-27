@@ -4,7 +4,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, Tag } from 'antd';
 
 /**
  * 组件常规props
@@ -21,21 +21,17 @@ export interface AIHeaderProps {
   /**
    * 带返回值的回调事件
    */
-  pullData?: (v: string) => string;
+  callback?: () => string;
 }
 
-function setvalue<T>(a: keyof T, value: typeof a): T {
-  console.log(a, typeof a, value);
-
-  return {
-    [a]: value,
-  } as T;
-};
 /**
  * 暴露出去的组件内部结构
  */
 export interface AIHeaderRefCurrent {
-  myPrivateFunction: () => void;
+  /**
+   * 一个内部方法， 返回字符串
+   */
+  myPrivateFunction: () => string;
 }
 /**
  * forwardRef 是结合 props和ref
@@ -43,12 +39,15 @@ export interface AIHeaderRefCurrent {
 const AIHeader = forwardRef(
   (propsData: AIHeaderProps, ref: ForwardedRef<AIHeaderRefCurrent>) => {
 
-    const [cildata, setcildata] = useState<AIHeaderProps>(propsData);
+    const [countStr, setCountStr] = useState<string>("");
 
-    const data = propsData;
-
-    const submit = () => {
-      console.log(123);
+    const click = () => {
+      if (propsData.callback !== undefined) {
+        console.log("哇,需要数据,老爹快点给我数据，我马上给你发通知");
+        let str = propsData.callback();
+        console.log("谢谢老爹的数据，数据很香很好用")
+        setCountStr(str);
+      }
     };
     /**
      * 注册暴露方法
@@ -61,26 +60,21 @@ const AIHeader = forwardRef(
      * 内部私有方法myPriFunction
      */
     const myPrivateFunction = () => {
-      console.log('这是内部的方法');
+      console.log("我居然被老爹使用了，真开心");
+      return "老爹记得帮我搽屁股";
     };
     /**
      *
      */
     const onchange = (v: any) => {
-      console.log('onchange触发');
-      data.onAlChange(v.target.value);
-      if (data.pullData !== undefined) {
-        let value = data.pullData(v.target.value);
-        // let st = setvalue<AI_HeaderProps>('onAlChange','test');
-
-        let newdata = Object.assign({}, data, setvalue('name', value));
-        setcildata(newdata);
-      }
+      propsData.onAlChange(v.target.value);
     };
 
     return (
       <div>
-        <Button onClick={submit}>{cildata.name}</Button>
+        <p>{propsData.name}</p>
+        <Button onClick={click}>调用父组件实现的函数</Button>
+        <Tag color="magenta">呈现老爹给的数据：{countStr}</Tag>
         <Input onChange={onchange} />
       </div>
     );
