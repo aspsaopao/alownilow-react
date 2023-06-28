@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import AIHeader, { AIHeaderProps, AIHeaderRefCurrent } from './component/AlHeader';
-import './App.css'
 import { DataType, pullDataSource, Dictionary } from './dataservice/data';
+import  styles from  './App.less';
 
 
 const App: React.FC = () => {
@@ -33,7 +33,7 @@ const App: React.FC = () => {
       title: '名称',
       dataIndex: 'name',
       render: (value: any, record: DataType, index: number) => {
-        return <p className={matchDataKey[record.rid] ? 'test' : ''}>{record.name}</p>
+        return <p className={matchDataKey[record.rid] ? styles.test : ''}>{record.name}</p>
       }
     },
     {
@@ -103,6 +103,7 @@ const App: React.FC = () => {
       <AIHeader   {...poopdata} ref={aIHeaderref} />
       <Button onClick={click}>试试儿子'AIHeader组件'中的方法</Button>
       <Tag color="lime">{alheaderPrivateReturnData}</Tag>
+      <p  className={styles.test}>dasd</p>
       <Table
         key="table"
         rowKey={'rid'}
