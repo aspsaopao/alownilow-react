@@ -19,7 +19,9 @@ const App: React.FC = () => {
   useEffect(() => {
     (async () => {
 
+      //模拟你接口取得数据 你自己替换
       let roomTypeList = await pullDataSource();
+      //这里就是进行排序 然后更新usestate
       let endata: DataType[] = roomTypeList.filter(t => t.nameEn != "");
       let notEndata: DataType[] = roomTypeList.filter(t => t.nameEn == "");
       sortTableData(endata, notEndata, setTableData);
@@ -140,10 +142,11 @@ function getRegexData(lastTableData: DataType[], regExpstr: string, newmatchData
   });
   return [regexdata, notRegexdata];
 }
+
 /**
- * 排序tableData数据源
- * @param endata 含有英文的数据数组
- * @param notEndata  不含有英文的数据数组
+ * 排序tableData数据源  
+ * @param endata 含有英文的数据数组 | 模糊匹配到的数组
+ * @param notEndata  不含有英文的数据数组 | 没有模糊匹配到的数组
  * @param setTableData  table的useState
  */
 function sortTableData(endata: DataType[], notEndata: DataType[], setTableData: React.Dispatch<React.SetStateAction<DataType[]>>) {
