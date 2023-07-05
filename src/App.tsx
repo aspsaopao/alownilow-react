@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Table, Tag } from 'antd';
+import { Button, InputNumber, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import AIHeader, { AIHeaderProps, AIHeaderRefCurrent } from './component/AlHeader';
 import { DataType, pullDataSource, Dictionary } from './dataservice/data';
 import styles from './App.less';
 
+interface ValueSplit {
+  value: string;
+  split: number;
+}
 
 const App: React.FC = () => {
+
+
   /**
    * table数据源
    */
@@ -97,13 +103,55 @@ const App: React.FC = () => {
   };
 
   const click = () => {
+    console.log(inputvalue["Number1"].value, 555);
+    console.log(inputvalue["Number2"].value, 666);
+
     console.log("准备调用子组件方法，看他想做啥")
     let str = aIHeaderref.current?.myPrivateFunction() ?? "";
     setAlheaderPrivateReturnData(str);
     console.log("子组件方法调用结束，得到子组件方法返回的信息，并展示了")
   }
+  const [inputvalue, setInputValue] = useState<Dictionary<ValueSplit>>({});
+  const blur = (v: any) => {
+
+    console.log(v);
+    
+    let sp = v.target.value?.toString()?.split('.') ?? [];
+    if (sp[1]?.length == 0 || !sp[1]) {
+      inputvalue[v.target.id]={
+        split: 2,
+        value: `${v.target.value}`,
+      }
+      let newinputvalue= Object.assign({},inputvalue);
+      setInputValue(newinputvalue)
+    }
+    else {
+      let a = sp[1]?.length;
+      let tea = a > 4 ? 4 : a;
+      inputvalue[v.target.id]={
+        split: tea,
+        value: `${v.target.value}`,
+      }
+      let newinputvalue= Object.assign({},inputvalue);
+      setInputValue(newinputvalue)
+      console.log(tea, inputvalue, 555);
+    }
+  }
+
   return (
     <div>
+      <InputNumber
+        id='Number1'
+        precision={inputvalue['Number1']?.split??0}
+        value={inputvalue['Number1']?.value??0}
+        onBlur={blur}
+      />
+      <InputNumber
+        id='Number2'
+        precision={inputvalue['Number2']?.split??0}
+        value={inputvalue['Number2']?.value??0}
+        onBlur={blur}
+      />
       <AIHeader   {...poopdata} ref={aIHeaderref} />
       <Button onClick={click}>试试儿子'AIHeader组件'中的方法</Button>
       <Tag color="lime">{alheaderPrivateReturnData}</Tag>
