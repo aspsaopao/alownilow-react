@@ -103,8 +103,8 @@ const App: React.FC = () => {
   };
 
   const click = () => {
-    console.log(inputvalue["Number1"].value, 555);
-    console.log(inputvalue["Number2"].value, 666);
+    console.log(inputvalue["Number1"]?.value??'', 555);
+    console.log(inputvalue["Number2"]?.value??'', 666);
 
     console.log("准备调用子组件方法，看他想做啥")
     let str = aIHeaderref.current?.myPrivateFunction() ?? "";
